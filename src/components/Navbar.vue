@@ -1,0 +1,29 @@
+<template>
+  <div>
+    <button 
+      v-for="(title, index) in titles" 
+      :key="index"
+      :style="{color: title.color}"
+      @click="$emit('menu-clicked', index)"
+    >
+      {{ title.text }}
+    </button>
+  </div>
+</template>
+
+<script setup>
+import {defineEmits} from "vue";
+
+defineEmits(['menu-clicked'])
+
+defineProps({
+   titles: Array
+})
+
+</script>
+
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+
+</style>
