@@ -57,7 +57,29 @@ async function getAllViruses() {
   return response;
 }
 
+async function getBasket(userId) {
+  let response = null;
+  try {
+    response = await LocalSource.getBasket(userId);
+  } catch (err) {
+    response = { error: 1, status: 404, data: "erreur réseau" };
+  }
+  return response;
+}
+
+async function updateBasket(userId, basket) {
+  let response = null;
+  try {
+    response = await LocalSource.updateBasket(userId, basket);
+  } catch (err) {
+    response = { error: 1, status: 404, data: "erreur réseau" };
+  }
+  return response;
+}
+
 export default {
   shopLogin,
   getAllViruses,
+  getBasket,
+  updateBasket,
 };

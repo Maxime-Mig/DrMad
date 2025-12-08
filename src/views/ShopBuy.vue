@@ -10,7 +10,8 @@
 </template>
 
 <script setup>
-import CheckedList from '@/components/CheckedList.vue'
+import ItemsList from '@/components/ItemsList.vue'
+import BasketList from '@/components/BasketList.vue'
 </script>
 
 <style scoped>
