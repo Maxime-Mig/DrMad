@@ -1,20 +1,20 @@
 <template>
-  <div >
-    <Navbar :titles="title" @menu-clicked="goTo"/>
+  <div>
+    <Navbar :titles="title" @menu-clicked="goTo" />
   </div>
-   <h1>Welcome to DrMad app</h1>
-    <router-view name="shopmain"></router-view>
+  <h1>Welcome to DrMad app</h1>
+  <router-view></router-view>
 </template>
 
 <script setup>
-import {onMounted} from "vue";
-import {useShopStore} from "@/stores/shop.js";
+import { onMounted } from "vue";
+import { useShopStore } from "@/stores/shop.js";
 import Navbar from "@/components/Navbar.vue";
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 
 const router = useRouter()
 const shopStore = useShopStore()
-const title = [{text: "Shop Login", color: "blue"}, {text: "Viruses", color: "green"}, {text: "Compte bancaire", color: "red"}]
+const title = [{ text: "Shop Login", color: "blue" }, { text: "Viruses", color: "green" }, { text: "Compte bancaire", color: "red" }]
 
 // Dès que l'appli est lancée, on va chercher la liste des virus pour la stocker dans le store
 onMounted(() => {
