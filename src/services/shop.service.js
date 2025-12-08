@@ -3,16 +3,8 @@ import bcrypt from "bcryptjs";
 
 async function shopLoginFromLocalSource(data) {
   // récupération auprès de la source locale
-  const users = await LocalSource.shopLogin(data)
-  
-  const user = users.find(u =>
-    u.login === data.login && bcrypt.compareSync(data.password, u.password)
-  )
-  if (user) {
-    return { error: 0, data: user }
-  } else {
-    return { error: 1, data: "Login ou mot de passe incorrect" }
-  }
+  // LocalSource.shopLogin gère déjà l'authentification et renvoie le user ou une erreur
+  return await LocalSource.shopLogin(data);
 }
 /*
 async function shopLoginFromAPI(data) {
@@ -23,7 +15,7 @@ async function shopLoginFromAPI(data) {
 
 async function getAllVirusesFromLocalSource() {
   // récupération auprès de la source locale
-  return LocalSource.getAllViruses()
+  return LocalSource.getAllViruses();
 }
 
 /*
@@ -37,30 +29,35 @@ async function shopLogin(data) {
   let response = null;
   try {
     // changer la méthode appelée quand cette fonctionnalité l'API est prête
-    response = await shopLoginFromLocalSource(data)
-  }
+    response = await shopLoginFromLocalSource(data);
+  } catch (err) {
     // NB: le catch n'aura lieu que pour des requête vers l'API, s'il y a une erreur réseau
-  catch(err) {
-    response = {error: 1, status: 404, data: 'erreur réseau, impossible de se loguer'  }
+    response = {
+      error: 1,
+      status: 404,
+      data: "erreur réseau, impossible de se loguer",
+    };
   }
-  return response
+  return response;
 }
-
 
 async function getAllViruses() {
   let response = null;
   try {
     // changer la méthode appelée quand cette fonctionnalité l'API est prête
-    response = await getAllVirusesFromLocalSource()
+    response = await getAllVirusesFromLocalSource();
+  } catch (err) {
+    // NB: le catch n'aura lieu que pour des requête vers l'API, s'il y a une erreur réseau
+    response = {
+      error: 1,
+      status: 404,
+      data: "erreur réseau, impossible de récupérer la liste des viruses",
+    };
   }
-  // NB: le catch n'aura lieu que pour des requête vers l'API, s'il y a une erreur réseau
-  catch(err) {
-    response = {error: 1, status: 404, data: 'erreur réseau, impossible de récupérer la liste des viruses'  }
-  }
-  return response
+  return response;
 }
 
 export default {
   shopLogin,
-  getAllViruses
-}
+  getAllViruses,
+};

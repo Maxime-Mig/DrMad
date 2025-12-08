@@ -23,7 +23,8 @@ const router = useRouter();
 async function handleLogin() {
   errorMessage.value = "";
   await shopStore.shopLogin({ login: login.value, password: password.value });
-  if (shopStore.shopUser) {
+  console.log(shopStore.shopUser);
+  if (!!shopStore.shopUser) {
     router.push("/shop/buy");
   } else {
     errorMessage.value = "Login ou mot de passe incorrect";
