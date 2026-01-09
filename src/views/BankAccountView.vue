@@ -12,7 +12,7 @@
       <p v-if="bankStore.accountAmount">{{bankStore.accountAmount}}</p>
       <p>passed transactions:</p>
       <ul v-if="bankStore.accountTransactions.length > 0">
-        <li v-for="(transaction, index) in bankStore.accountTransactions" :key="index">{{new Date(transaction.date.$date).toLocaleString()}} : {{transaction.amount}}</li>
+        <li v-for="(transaction, index) in bankStore.accountTransactions" :key="index">{{formatDate(transaction.date.$date)}} : {{transaction.amount}}</li>
       </ul>
     </div>
     <p v-else-if="bankStore.accountNumberState === -1">Numéro de compte erroné</p>
@@ -35,6 +35,17 @@
   function resetAccount() {
     number.value = '';
     bankStore.accountNumberState = 0;
+  }
+
+  function formatDate(dateString) {
+    const d = new Date(dateString);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const seconds = String(d.getSeconds()).padStart(2, '0');
+    return `${month}/${day}/${year} at ${hours}:${minutes}:${seconds}`;
   }
 
 </script>

@@ -8,13 +8,17 @@
     <label for="filterstockactive"> par stock</label><input type="checkbox" v-model="filterStockActive" id="filterstockactive">
     <hr/>
 
-    <div>
+    <div v-if="filterPriceActive">
       <label for="filterprice">Prix inférieur à : </label>
-      <input type="number" v-model.number="priceFilter" id="filterprice">
-      <br>
+      <input type="text" v-model="priceFilter" id="filterprice">
+    </div>
+    
+    <div v-if="filterNameActive">
       <label for="filtername">Nom contient : </label>
       <input type="text" v-model="nameFilter" id="filtername">
-      <br>
+    </div>
+
+    <div v-if="filterStockActive">
       <label for="filterstock">En stock : </label>
       <input type="checkbox" v-model="stockFilter" id="filterstock">
     </div>
@@ -51,9 +55,11 @@ const filterViruses = computed(() => {
   let temp = shopStore.viruses;
 
   if (filterPriceActive.value) {
-    const numericPrice = Number(priceFilter.value);
+    const numericPrice = parseFloat(priceFilter.value);
     if (!isNaN(numericPrice) && numericPrice > 0) {
       temp = temp.filter(v => v.price < numericPrice);
+    } else {
+      temp = [];
     }
   }
 
