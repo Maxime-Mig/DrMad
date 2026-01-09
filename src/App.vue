@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar :titles="title" @menu-clicked="goTo" />
+    <NavBar :titles="title" @menu-clicked="goTo" />
   </div>
   <h1>Welcome to DrMad app</h1>
   <router-view></router-view>
@@ -9,7 +9,7 @@
 <script setup>
 import { onMounted } from "vue";
 import { useShopStore } from "@/stores/shop.js";
-import Navbar from "@/components/Navbar.vue";
+import NavBar from "@/components/NavBar.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter()
