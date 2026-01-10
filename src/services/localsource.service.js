@@ -79,7 +79,7 @@ function orderBasket(userId, basket) {
     if (item) {
       let price = item.price * basketItem.amount
       let discount = 0
-      
+
       if (item.promotion) {
         let applicablePromo = item.promotion
           .filter(p => basketItem.amount >= p.amount)
@@ -113,6 +113,27 @@ function orderBasket(userId, basket) {
   return { error: 0, status: 200, data: order.uuid }
 }
 
+function getOrder(userId, uuid) {
+  let user = shopusers.find(u => u._id === userId)
+  if (!user) return { error: 1, status: 404, data: 'utilisateur inconnu' }
+
+  let order = user.orders.find(o => o.uuid === uuid)
+  if (!order) return { error: 1, status: 404, data: 'commande inconnue' }
+
+  return { error: 0, status: 200, data: JSON.parse(JSON.stringify(order)) }
+}
+
+function payOrder(userId, uuid) {
+  let user = shopusers.find(u => u._id === userId)
+  if (!user) return { error: 1, status: 404, data: 'utilisateur inconnu' }
+
+  let order = user.orders.find(o => o.uuid === uuid)
+  if (!order) return { error: 1, status: 404, data: 'commande inconnue' }
+
+  order.status = 'finalized'
+  return { error: 0, status: 200, data: order.uuid }
+}
+
 export default {
   shopLogin,
   getAllViruses,
@@ -120,5 +141,7 @@ export default {
   getAccountTransactions,
   getBasket,
   updateBasket,
-  orderBasket
+  orderBasket,
+  getOrder,
+  payOrder
 }

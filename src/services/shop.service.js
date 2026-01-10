@@ -87,10 +87,32 @@ async function orderBasket(userId, basket) {
   return response;
 }
 
+async function getOrder(userId, uuid) {
+  let response = null;
+  try {
+    response = await LocalSource.getOrder(userId, uuid);
+  } catch (err) {
+    response = { error: 1, status: 404, data: "erreur réseau" };
+  }
+  return response;
+}
+
+async function payOrder(userId, uuid) {
+  let response = null;
+  try {
+    response = await LocalSource.payOrder(userId, uuid);
+  } catch (err) {
+    response = { error: 1, status: 404, data: "erreur réseau" };
+  }
+  return response;
+}
+
 export default {
   shopLogin,
   getAllViruses,
   getBasket,
   updateBasket,
   orderBasket,
+  getOrder,
+  payOrder,
 };

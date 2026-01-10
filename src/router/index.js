@@ -2,20 +2,20 @@ import { createRouter, createWebHistory } from 'vue-router'
 import VirusesView from "@/views/VirusesView.vue";
 
 const routes = [
-    // route pour afficher la liste des virus
+  // route pour afficher la liste des virus
   {
     path: '/shop/items',
     name: 'shopitems',
     component: VirusesView
   },
-    // route pour se loguer
+  // route pour se loguer
   {
     path: '/shop/login',
     name: 'shoplogin',
     // import dynamique du composant, plutôt qu'en début de fichier, comme la 1ère route.
     component: () => import('@/views/ShopLogin.vue')
   },
-    // route pour accéder au compte bancaire
+  // route pour accéder au compte bancaire
   {
     path: '/bank/account',
     name: 'bankaccount',
@@ -45,7 +45,8 @@ const routes = [
       {
         path: 'pay/:orderId',
         name: 'shoppay',
-        component: () => import('@/views/ShopPay.vue')
+        component: () => import('@/views/ShopPay.vue'),
+        props: (route) => ({ orderUuid: route.params.orderId })
       },
       {
         path: 'orders',
