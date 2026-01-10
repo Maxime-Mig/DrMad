@@ -10,25 +10,27 @@ export const useShopStore = defineStore('shop', () => {
 
   const basket = ref({ items: [] })
 
-  // Watch basket changes to update backend
-  watch(basket, async (newBasket) => {
+  async function saveBasket() {
     if (shopUser.value) {
-      console.log('saving basket...', newBasket)
-      await ShopService.updateBasket(shopUser.value._id, newBasket)
+      await ShopService.updateBasket(shopUser.value._id, basket.value)
     }
-  }, { deep: true })
+  }
+
+  async function initBasket() {
+    if (shopUser.value) {
+      let basketResponse = await ShopService.getBasket(shopUser.value._id)
+      if (basketResponse.error === 0) {
+        basket.value = basketResponse.data
+      }
+    }
+  }
 
   async function shopLogin(data) {
     console.log('login');
     let response = await ShopService.shopLogin(data)
     if (response.error === 0) {
       shopUser.value = response.data
-
-      // Load basket
-      let basketResponse = await ShopService.getBasket(shopUser.value._id)
-      if (basketResponse.error === 0) {
-        basket.value = basketResponse.data
-      }
+      await initBasket()
     }
     else {
       console.log(response.data)
@@ -46,5 +48,38 @@ export const useShopStore = defineStore('shop', () => {
     }
   }
 
-  return { viruses, shopUser, basket, shopLogin, getAllViruses }
+  async function updateBasketItem(item, amount = 1) {
+    const itemId = item._id
+    const existingItem = basket.value.items.find(e => e.item === itemId)
+
+    if (existingItem) {
+      existingItem.amount += amount
+
+      if (existingItem.amount <= 0) {
+        removeBasketItem(item)
+      }
+
+    } else {
+      if (amount > 0) {
+        basket.value.items.push({ item: itemId, amount: amount })
+      }
+    }
+    await saveBasket()
+  }
+
+  async function removeBasketItem(item) {
+    const itemId = item._id
+    const index = basket.value.items.findIndex(e => e.item === itemId)
+    if (index !== -1) {
+      basket.value.items.splice(index, 1)
+    }
+    await saveBasket()
+  }
+
+  async function clearBasket() {
+    basket.value.items = []
+    await saveBasket()
+  }
+
+  return { viruses, shopUser, basket, shopLogin, getAllViruses, initBasket, updateBasketItem, removeBasketItem, clearBasket }
 })

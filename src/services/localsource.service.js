@@ -55,7 +55,6 @@ function getBasket(userId) {
     user.basket = { items: [] }
   }
 
-  // Clone to avoid direct reference leaks
   let basket = JSON.parse(JSON.stringify(user.basket))
   return { error: 0, status: 200, data: basket }
 }
@@ -64,9 +63,54 @@ function updateBasket(userId, basket) {
   let user = shopusers.find(u => u._id === userId)
   if (!user) return { error: 1, status: 404, data: 'utilisateur inconnu' }
 
-  // Clone to store independent copy
   user.basket = JSON.parse(JSON.stringify(basket))
   return { error: 0, status: 200, data: user.basket }
+}
+
+function orderBasket(userId, basket) {
+  let user = shopusers.find(u => u._id === userId)
+  if (!user) return { error: 1, status: 404, data: 'utilisateur inconnu' }
+
+  let orderItems = []
+  let total = 0
+
+  for (let basketItem of basket.items) {
+    let item = items.find(i => i._id === basketItem.item)
+    if (item) {
+      let price = item.price * basketItem.amount
+      let discount = 0
+      
+      if (item.promotion) {
+        let applicablePromo = item.promotion
+          .filter(p => basketItem.amount >= p.amount)
+          .sort((a, b) => b.amount - a.amount)[0]
+
+        if (applicablePromo) {
+          discount = applicablePromo.discount
+        }
+      }
+
+      total += price * (1 - discount / 100)
+
+      orderItems.push({
+        item: item,
+        amount: basketItem.amount
+      })
+    }
+  }
+
+  let order = {
+    items: orderItems,
+    date: new Date(),
+    total: total,
+    status: 'waiting_payment',
+    uuid: uuidv4()
+  }
+
+  if (!user.orders) user.orders = []
+  user.orders.push(order)
+
+  return { error: 0, status: 200, data: order.uuid }
 }
 
 export default {
@@ -76,4 +120,5 @@ export default {
   getAccountTransactions,
   getBasket,
   updateBasket,
+  orderBasket
 }

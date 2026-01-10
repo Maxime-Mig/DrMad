@@ -77,9 +77,20 @@ async function updateBasket(userId, basket) {
   return response;
 }
 
+async function orderBasket(userId, basket) {
+  let response = null;
+  try {
+    response = await LocalSource.orderBasket(userId, basket);
+  } catch (err) {
+    response = { error: 1, status: 404, data: "erreur réseau" };
+  }
+  return response;
+}
+
 export default {
   shopLogin,
   getAllViruses,
   getBasket,
   updateBasket,
+  orderBasket,
 };
