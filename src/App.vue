@@ -1,33 +1,46 @@
 <template>
   <div>
-    <NavBar :titles="title" @menu-clicked="goTo" />
+    <NavBar :titles="navItems" @menu-clicked="goTo" />
   </div>
   <h1>Welcome to DrMad app</h1>
   <router-view></router-view>
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, computed } from "vue";
 import { useShopStore } from "@/stores/shop.js";
 import NavBar from "@/components/NavBar.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter()
 const shopStore = useShopStore()
-const title = [{ text: "Shop Login", color: "blue" }, { text: "Viruses", color: "green" }, { text: "Compte bancaire", color: "red" }]
 
-// Dès que l'appli est lancée, on va chercher la liste des virus pour la stocker dans le store
-onMounted(() => {
-  shopStore.getAllViruses()
+const navItems = computed(() => {
+  const items = [];
+  if (!shopStore.shopUser) {
+    items.push({ text: "Shop Login", color: "blue", path: "/shop/login" });
+  } else {
+    items.push({ text: "Logout", color: "red", action: logout });
+    items.push({ text: "Acheter", color: "green", path: "/shop/buy" });
+    items.push({ text: "Payer", color: "blue", path: "/shop/pay" });
+    items.push({ text: "Mes commandes", color: "orange", path: "/shop/orders" });
+  }
+  items.push({ text: "Viruses", color: "green", path: "/shop/items" });
+  items.push({ text: "Compte bancaire", color: "red", path: "/bank/account" });
+  return items;
 })
 
-function goTo(linkIndex) {
-  if (linkIndex === 0) {
-    router.push('/shop/login')
-  } else if (linkIndex === 1) {
-    router.push('/shop/items')
-  } else if (linkIndex === 2) {
-    router.push('/bank/account')
+function logout() {
+  shopStore.shopUser = null;
+  router.push('/shop');
+}
+
+function goTo(index) {
+  const item = navItems.value[index];
+  if (item.action) {
+    item.action();
+  } else if (item.path) {
+    router.push(item.path);
   }
 }
 </script>
