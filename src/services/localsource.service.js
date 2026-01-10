@@ -134,6 +134,25 @@ function payOrder(userId, uuid) {
   return { error: 0, status: 200, data: order.uuid }
 }
 
+function getAllOrders(userId) {
+  let user = shopusers.find(u => u._id === userId)
+  if (!user) return { error: 1, status: 404, data: 'utilisateur inconnu' }
+
+  let orders = user.orders || []
+  return { error: 0, status: 200, data: JSON.parse(JSON.stringify(orders)) }
+}
+
+function cancelOrder(userId, uuid) {
+  let user = shopusers.find(u => u._id === userId)
+  if (!user) return { error: 1, status: 404, data: 'utilisateur inconnu' }
+
+  let order = user.orders.find(o => o.uuid === uuid)
+  if (!order) return { error: 1, status: 404, data: 'commande inconnue' }
+
+  order.status = 'cancelled'
+  return { error: 0, status: 200, data: order.uuid }
+}
+
 export default {
   shopLogin,
   getAllViruses,
@@ -143,5 +162,7 @@ export default {
   updateBasket,
   orderBasket,
   getOrder,
-  payOrder
+  payOrder,
+  getAllOrders,
+  cancelOrder
 }

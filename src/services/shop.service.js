@@ -107,6 +107,26 @@ async function payOrder(userId, uuid) {
   return response;
 }
 
+async function getAllOrders(userId) {
+  let response = null;
+  try {
+    response = await LocalSource.getAllOrders(userId);
+  } catch (err) {
+    response = { error: 1, status: 404, data: "erreur réseau" };
+  }
+  return response;
+}
+
+async function cancelOrder(userId, uuid) {
+  let response = null;
+  try {
+    response = await LocalSource.cancelOrder(userId, uuid);
+  } catch (err) {
+    response = { error: 1, status: 404, data: "erreur réseau" };
+  }
+  return response;
+}
+
 export default {
   shopLogin,
   getAllViruses,
@@ -115,4 +135,6 @@ export default {
   orderBasket,
   getOrder,
   payOrder,
+  getAllOrders,
+  cancelOrder
 };

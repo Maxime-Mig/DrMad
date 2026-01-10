@@ -81,5 +81,23 @@ export const useShopStore = defineStore('shop', () => {
     await saveBasket()
   }
 
-  return { viruses, shopUser, basket, shopLogin, getAllViruses, initBasket, updateBasketItem, removeBasketItem, clearBasket }
+  async function getAllOrders() {
+    if (shopUser.value) {
+      let response = await ShopService.getAllOrders(shopUser.value._id)
+      if (response.error === 0) {
+        shopUser.value.orders = response.data
+      }
+    }
+  }
+
+  async function cancelOrder(uuid) {
+    if (shopUser.value) {
+      let response = await ShopService.cancelOrder(shopUser.value._id, uuid)
+      if (response.error === 0) {
+        await getAllOrders()
+      }
+    }
+  }
+
+  return { viruses, shopUser, basket, shopLogin, getAllViruses, initBasket, updateBasketItem, removeBasketItem, clearBasket, getAllOrders, cancelOrder }
 })

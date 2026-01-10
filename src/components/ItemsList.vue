@@ -97,16 +97,8 @@ const handleCheckedChanged = (payload) => {
   }
 };
 
-function addToBasket(virus, amount) {
-  const basketItems = shopStore.basket.items;
-
-  const existingItemIndex = basketItems.findIndex(item => item.item === virus._id);
-
-  if (existingItemIndex !== -1) {
-    basketItems[existingItemIndex].amount += amount;
-  } else {
-    basketItems.push({ item: virus._id, amount: amount });
-  }
+async function addToBasket(virus, amount) {
+  await shopStore.updateBasketItem(virus, amount);
 }
 
 function handleItemButtonClicked(payload) {

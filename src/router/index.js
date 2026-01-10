@@ -30,28 +30,29 @@ const routes = [
       {
         path: 'home',
         name: 'shophome',
-        component: () => import('@/views/ShopHome.vue'),
+        components: { shopmain: () => import('@/views/ShopHome.vue') },
+        alias: '/shop'
       },
       {
         path: 'login',
         name: 'shoplogin',
-        component: () => import('@/views/ShopLogin.vue')
+        components: { shopmain: () => import('@/views/ShopLogin.vue') }
       },
       {
         path: 'buy',
         name: 'shopbuy',
-        component: () => import('@/views/ShopBuy.vue')
+        components: { shopmain: () => import('@/views/ShopBuy.vue') }
       },
       {
         path: 'pay/:orderId',
         name: 'shoppay',
-        component: () => import('@/views/ShopPay.vue'),
-        props: (route) => ({ orderUuid: route.params.orderId })
+        components: { shopmain: () => import('@/views/ShopPay.vue') },
+        props: { shopmain: (route) => ({ orderUuid: route.params.orderId }) }
       },
       {
         path: 'orders',
         name: 'shoporders',
-        component: () => import('@/views/ShopOrders.vue')
+        components: { shopmain: () => import('@/views/ShopOrders.vue') }
       },
     ]
   }
