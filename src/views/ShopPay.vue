@@ -1,43 +1,79 @@
 <template>
-  <div class="shop-pay">
-    <h2>Paiement de la commande</h2>
-    <div class="pay-form">
-      <label for="uuid">UUID de la commande :</label>
-      <input type="text" id="uuid" v-model="uuid" placeholder="Saisir l'UUID" />
-      <button @click="handlePay" :disabled="!uuid">Payer</button>
+    <div class="shop-pay">
+        <h2>Paiement de la commande</h2>
+        <div v-if="order">
+            <p>UUID Commande: {{ order.uuid }}</p>
+            <p>
+                <span>Total à payer: {{ order.total }} €</span>
+                <span style="margin-left: 20px; font-style: italic;">Date: {{ new Date(order.date).toLocaleDateString()
+                    }}</span>
+            </p>
+
+            <div>
+                <label>UUID Transaction Bancaire: </label>
+                <input type="text" v-model="transactionUuid">
+            </div>
+
+            <button @click="payOrder">Payer</button>
+            <button @click="cancelOrder">Annuler</button>
+        </div>
+        <div v-else>
+            <p>Chargement de la commande...</p>
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useShopStore } from '@/stores/shop'
-import ShopService from '@/services/shop.service'
 
 const props = defineProps({
-  orderUuid: {
-    type: String,
-    default: ''
-  }
+    orderUuid: {
+        type: String,
+        default: ''
+    }
 })
 
-const uuid = ref(props.orderUuid)
-const store = useShopStore()
 const router = useRouter()
+const shopStore = useShopStore()
+const order = ref(null)
+const transactionUuid = ref('')
 
-async function handlePay() {
-  if (!store.shopUser) {
-    alert("Veuillez vous connecter")
-    return
-  }
-  
-  const response = await ShopService.payOrder(store.shopUser._id, uuid.value)
-  if (response.error === 0) {
-    alert("Paiement validé !")
-    router.push('/shop/orders')
-  } else {
-    alert("Erreur de paiement : " + response.data)
-  }
+onMounted(async () => {
+    if (!shopStore.shopUser) {
+        router.push('/shop/login')
+        return
+    }
+    let res = await shopStore.getOrder(props.orderUuid)
+    if (res.error === 0) {
+        order.value = res.data
+    } else {
+        alert("Erreur chargement commande: " + res.data)
+    }
+})
+
+async function payOrder() {
+    if (!transactionUuid.value) {
+        alert("Veuillez saisir l'UUID de la transaction bancaire")
+        return
+    }
+    let res = await shopStore.payOrder(props.orderUuid, transactionUuid.value)
+    if (res.error === 0) {
+        alert("Commande payée !")
+        router.push('/shop/orders')
+    } else {
+        alert("Erreur: " + res.data)
+    }
+}
+
+async function cancelOrder() {
+    router.push('/shop')
 }
 </script>
+
+<style scoped>
+.shop-pay {
+    padding: 20px;
+}
+</style>

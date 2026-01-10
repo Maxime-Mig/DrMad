@@ -1,38 +1,42 @@
 <template>
   <div class="items-list">
     <h1>Les virus</h1>
-    
+
     <div>
       <span>Filtres :</span>
-      <label for="filterpriceactive"> par prix</label><input type="checkbox" v-model="filterPriceActive" id="filterpriceactive">
-      <label for="filternameactive"> par nom</label><input type="checkbox" v-model="filterNameActive" id="filternameactive">
-      <label for="filterstockactive"> par stock</label><input type="checkbox" v-model="filterStockActive" id="filterstockactive">
-      <hr/>
+      <label for="filterpriceactive"> par prix</label><input type="checkbox" v-model="filterPriceActive"
+        id="filterpriceactive">
+      <label for="filternameactive"> par nom</label><input type="checkbox" v-model="filterNameActive"
+        id="filternameactive">
+      <label for="filterstockactive"> par stock</label><input type="checkbox" v-model="filterStockActive"
+        id="filterstockactive">
+      <hr />
     </div>
 
     <div>
-      <label for="filterprice">Prix inférieur à : </label>
-      <input type="number" v-model.number="priceFilter" id="filterprice">
-      <br>
-      <label for="filtername">Nom contient : </label>
-      <input type="text" v-model="nameFilter" id="filtername">
-      <br>
-      <label for="filterstock">En stock : </label>
-      <input type="checkbox" v-model="stockFilter" id="filterstock">
+      <div v-if="filterPriceActive">
+        <label for="filterprice">Prix inférieur à : </label>
+        <input type="number" v-model.number="priceFilter" id="filterprice">
+      </div>
+      <br v-if="filterPriceActive" />
+
+      <div v-if="filterNameActive">
+        <label for="filtername">Nom contient : </label>
+        <input type="text" v-model="nameFilter" id="filtername">
+      </div>
+      <br v-if="filterNameActive" />
+
+      <div v-if="filterStockActive">
+        <label for="filterstock">En stock : </label>
+        <input type="checkbox" v-model="stockFilter" id="filterstock">
+      </div>
     </div>
 
-    <CheckedList 
-      :data="filterViruses" 
-      :fields="['name', 'price', 'promotion']"
-      :itemCheck="true"
-      :checked="checked"
-      :itemButton="{ show: true, text: 'Ajouter au panier' }"
-      :listButton="{ show: true, text: 'Ajouter les virus selectionnés au panier' }"
-      :itemAmount="true"
-      @checked-changed="handleCheckedChanged" 
-      @item-button-clicked="handleItemButtonClicked"
-      @list-button-clicked="handleListButtonClicked"
-    ></CheckedList>
+    <CheckedList :data="filterViruses" :fields="['name', 'price', 'promotionDisplay']" :itemCheck="true"
+      :checked="checked" :itemButton="{ show: true, text: 'Ajouter au panier' }"
+      :listButton="{ show: true, text: 'Ajouter les virus selectionnés au panier' }" :itemAmount="true"
+      @checked-changed="handleCheckedChanged" @item-button-clicked="handleItemButtonClicked"
+      @list-button-clicked="handleListButtonClicked"></CheckedList>
   </div>
 </template>
 
@@ -68,7 +72,17 @@ const filterViruses = computed(() => {
     temp = temp.filter(v => v.stock > 0);
   }
 
-  return temp;
+  // Transform features for display
+  return temp.map(v => {
+    let promoDisplay = ""
+    if (v.promotion && v.promotion.length > 0) {
+      promoDisplay = v.promotion.map(p => `Qte: ${p.amount}, Remise: ${p.discount}%`).join(' ; ')
+    }
+    return {
+      ...v,
+      promotionDisplay: promoDisplay
+    }
+  });
 })
 
 const selected = ref([]) // tableau d'IDs

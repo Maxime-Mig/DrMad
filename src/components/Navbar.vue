@@ -1,29 +1,39 @@
 <template>
-  <div>
-    <button 
-      v-for="(title, index) in titles" 
-      :key="index"
-      :style="{color: title.color}"
-      @click="$emit('menu-clicked', index)"
-    >
-      {{ title.text }}
+  <div class="navbar">
+    <button v-for="(link, index) in links" :key="index" @click="goTo(link.to)">
+      <slot name="nav-button" :label="link.label" :link="link">
+        {{ link.label }}
+      </slot>
     </button>
   </div>
 </template>
 
 <script setup>
-import {defineEmits} from "vue";
+import { useRouter } from 'vue-router'
 
-defineEmits(['menu-clicked'])
-
-defineProps({
-   titles: Array
+const props = defineProps({
+  links: {
+    type: Array, // [{ label: text, to: route, ... }]
+    required: true
+  }
 })
 
+const router = useRouter()
+
+function goTo(dest) {
+  if (dest) {
+    router.push(dest)
+  }
+}
 </script>
 
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.navbar {
+  margin-bottom: 20px;
+}
 
+button {
+  margin-right: 10px;
+  cursor: pointer;
+}
 </style>

@@ -97,10 +97,10 @@ async function getOrder(userId, uuid) {
   return response;
 }
 
-async function payOrder(userId, uuid) {
+async function payOrder(userId, uuid, transactionUuid) {
   let response = null;
   try {
-    response = await LocalSource.payOrder(userId, uuid);
+    response = await LocalSource.payOrder(userId, uuid, transactionUuid);
   } catch (err) {
     response = { error: 1, status: 404, data: "erreur réseau" };
   }
@@ -136,5 +136,5 @@ export default {
   getOrder,
   payOrder,
   getAllOrders,
-  cancelOrder
+  cancelOrder,
 };
