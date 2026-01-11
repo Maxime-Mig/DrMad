@@ -46,35 +46,31 @@ const headers = [
 ]
 
 function checkDates() {
-    // Validation logic (clear invalid dates)
     if (dateFrom.value && dateTo.value) {
         if (new Date(dateFrom.value) > new Date(dateTo.value)) {
-            dateTo.value = "" // Invalid
+            dateTo.value = "" 
         }
     }
 }
 
 const filteredTransactions = computed(() => {
     let txs = bankStore.accountTransactions.map(t => {
-        // Enhance transaction object for display
         let d = new Date(t.date.$date)
         return {
             ...t,
             amountDisplay: t.amount + ' €',
             dateDisplay: d.toLocaleDateString() + ' ' + d.toLocaleTimeString(),
-            typeDisplay: t.amount < 0 ? 'S' : 'D',
+            typeDisplay: t.amount < 0 ? 'Débit' : 'Crédit',
             rawDate: d
         }
     })
 
-    // Sort chrono desc
     txs.sort((a, b) => b.rawDate - a.rawDate)
 
     if (!filterActive.value) return txs
 
     let start = dateFrom.value ? new Date(dateFrom.value) : null
     let end = dateTo.value ? new Date(dateTo.value) : null
-    // Make end date inclusive of the day
     if (end) end.setHours(23, 59, 59)
 
     return txs.filter(t => {

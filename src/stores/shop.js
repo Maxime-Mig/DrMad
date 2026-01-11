@@ -9,6 +9,12 @@ export const useShopStore = defineStore("shop", () => {
 
   const basket = ref({ items: [] });
 
+  const storedUser = localStorage.getItem('shopUser');
+  if (storedUser) {
+    shopUser.value = JSON.parse(storedUser);
+    setTimeout(() => initBasket(), 0);
+  }
+
   async function saveBasket() {
     if (shopUser.value) {
       await ShopService.updateBasket(shopUser.value._id, basket.value);
@@ -29,10 +35,17 @@ export const useShopStore = defineStore("shop", () => {
     let response = await ShopService.shopLogin(data);
     if (response.error === 0) {
       shopUser.value = response.data;
+      localStorage.setItem('shopUser', JSON.stringify(response.data));
       await initBasket();
     } else {
       console.log(response.data);
     }
+  }
+
+  function shopLogout() {
+    shopUser.value = null;
+    basket.value = { items: [] };
+    localStorage.removeItem('shopUser');
   }
 
   async function getAllViruses() {
@@ -118,6 +131,7 @@ export const useShopStore = defineStore("shop", () => {
     shopUser,
     basket,
     shopLogin,
+    shopLogout,
     getAllViruses,
     initBasket,
     updateBasketItem,

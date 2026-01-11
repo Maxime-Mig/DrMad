@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1>Bank Account</h1>
+    <h1>Compte bancaire</h1>
 
-    <span>Account number</span><input v-model="number">
+    <span>Numéro de compte</span><input v-model="number">
 
     <button @click="login">Valider</button>
     <p v-if="errorMsg" style="color: red">{{ errorMsg }}</p>
@@ -36,12 +36,12 @@ async function login() {
   if (!isValidNumber.value) {
     console.log("Invalid number format");
     errorMsg.value = "Format invalide (Ex: FRDRMAD578901234567890-0000666)"
-    alert("Numéro non valide") // Keep alert as requested
+    alert("Numéro non valide") 
     return
   }
 
   console.log("Calling fetchAccount...");
-  console.log("Store keys:", Object.keys(bankStore)); // Debug keys
+  console.log("Store keys:", Object.keys(bankStore)); 
   await bankStore.fetchAccount(number.value)
   console.log("Account State:", bankStore.accountNumberState);
 

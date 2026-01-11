@@ -5,9 +5,9 @@
                 <slot name="menu-title" :label="item.label">{{ item.label }}</slot>
             </div>
             <div v-else-if="item.type === 'link'">
-                <span @click="goTo(item.to)">
+                <span @click="goTo(item.to, item.disabled)">
                     <slot name="menu-link" :label="item.label">
-                        <button>{{ item.label }}</button>
+                        <button :disabled="item.disabled">{{ item.label }}</button>
                     </slot>
                 </span>
             </div>
@@ -27,8 +27,8 @@ const props = defineProps({
 
 const router = useRouter()
 
-function goTo(dest) {
-    if (dest) {
+function goTo(dest, disabled) {
+    if (dest && !disabled) {
         router.push(dest)
     }
 }

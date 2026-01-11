@@ -1,6 +1,10 @@
 <template>
     <div class="bank-view">
         <NavBar :links="navLinks" />
+
+        <h1>Banque</h1>
+        <hr>
+
         <div class="bank-container">
             <VerticalMenu :items="menuItems">
                 <template #menu-title="{ label }">
@@ -9,7 +13,6 @@
             </VerticalMenu>
 
             <div class="bank-content">
-                <!-- Passing slots to nested components via RouterView -->
                 <router-view name="bankmain" v-slot="{ Component }">
                     <component :is="Component">
                         <template #account-amount="{ amount }">
@@ -37,7 +40,7 @@ import { useBankStore } from "@/stores/bank.js"
 
 const bankStore = useBankStore()
 
-// NavBar Logic
+// NavBar 
 const navLinks = computed(() => {
     if (bankStore.accountNumberState === 1) {
         return [{ label: "Déconnexion", to: "/bank/logout" }]
@@ -45,29 +48,16 @@ const navLinks = computed(() => {
     return [{ label: "Mon compte", to: "/bank/account" }]
 })
 
-// VerticalMenu Logic
+// VerticalMenu 
 const menuItems = computed(() => {
     const isDisabled = bankStore.accountNumberState !== 1
-    // If disabled, maybe links shouldn't work? 
-    // "Ces boutons ne sont actifs que si l'utilisateur a fourni un n° de compte valide"
-    // VerticalMenu doesn't natively support disabled state in my implementation.
-    // I can check if I should render them or make them non-clickable.
-    // Or I just conditional render the full list.
-
-    if (isDisabled) {
-        return [
-            { type: "title", label: "Opérations" },
-            { type: "title", label: "États" }
-        ]
-        // Or return nothing? Instructions say buttons are inactive.
-    }
 
     return [
         { type: "title", label: "Opérations" },
-        { type: "link", label: "Solde", to: "/bank/amount" },
-        { type: "link", label: "Débit/Virement", to: "/bank/operation" },
+        { type: "link", label: "Solde", to: "/bank/amount", disabled: isDisabled },
+        { type: "link", label: "Débit/Virement", to: "/bank/operation", disabled: isDisabled },
         { type: "title", label: "États" },
-        { type: "link", label: "Historique", to: "/bank/history" }
+        { type: "link", label: "Historique", to: "/bank/history", disabled: isDisabled }
     ]
 })
 

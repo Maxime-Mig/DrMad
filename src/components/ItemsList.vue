@@ -72,7 +72,6 @@ const filterViruses = computed(() => {
     temp = temp.filter(v => v.stock > 0);
   }
 
-  // Transform features for display
   return temp.map(v => {
     let promoDisplay = ""
     if (v.promotion && v.promotion.length > 0) {
@@ -89,7 +88,6 @@ const selected = ref([]) // tableau d'IDs
 
 const filteredVirusIds = computed(() => filterViruses.value.map(v => v._id));
 
-// Nettoyer selected quand le filtre change
 watch(filteredVirusIds, (newIds) => {
   selected.value = selected.value.filter(id => newIds.includes(id));
 }, { immediate: false });
@@ -116,18 +114,15 @@ async function addToBasket(virus, amount) {
 }
 
 function handleItemButtonClicked(payload) {
-  // payload is { index, amount }
   const virus = filterViruses.value[payload.index];
   addToBasket(virus, payload.amount);
 }
 
 function handleListButtonClicked(payload) {
-  // payload is array of { index, amount }
   payload.forEach(itemPayload => {
     const virus = filterViruses.value[itemPayload.index];
     addToBasket(virus, itemPayload.amount);
   });
-  // Deselection des items
   selected.value = [];
 }
 </script>

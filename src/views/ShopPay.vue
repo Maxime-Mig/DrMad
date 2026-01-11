@@ -5,7 +5,7 @@
             <p>UUID Commande: {{ order.uuid }}</p>
             <p>
                 <span>Total à payer: {{ order.total }} €</span>
-                <span style="margin-left: 20px; font-style: italic;">Date: {{ new Date(order.date).toLocaleDateString()
+                <span style="margin-left: 20px; font-style: italic;">Date: {{ new Date(order.date.$date || order.date).toLocaleDateString()
                     }}</span>
             </p>
 

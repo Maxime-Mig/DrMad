@@ -6,6 +6,7 @@
         <span :style="{ color: link.color }">{{ label }}</span>
       </template>
     </NavBar>
+    <hr>
     <router-view name="shopmain"></router-view>
   </div>
 </template>
@@ -20,7 +21,7 @@ const shopStore = useShopStore()
 const navItems = computed(() => {
   const items = [];
   if (!shopStore.shopUser) {
-    items.push({ label: "Login", color: "blue", to: "/shop/login" });
+    items.push({ label: "Login", to: "/shop/login" });
   } else {
     items.push({ label: "Logout", color: "red", to: "/shop/logout" });
     items.push({ label: "Acheter", color: "green", to: "/shop/buy" });

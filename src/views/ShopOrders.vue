@@ -50,7 +50,11 @@ onMounted(async () => {
 
 function formatDate(dateString) {
     if (!dateString) return ''
-    return new Date(dateString).toLocaleDateString() + ' ' + new Date(dateString).toLocaleTimeString()
+    let date = dateString
+    if (dateString.$date) {
+        date = dateString.$date
+    }
+    return new Date(date).toLocaleDateString() + ' ' + new Date(date).toLocaleTimeString()
 }
 
 function handlePay(uuid) {

@@ -38,16 +38,16 @@ function getAllViruses() {
 }
 
 function getAccount(number) {
-  if (!number) return { error: 1, status: 404, data: "aucun numéro fourni" };
-  // Note: getAccount takes {number: ...} as data according to instructions "getAccount(data)... data.number"
-  // But standard call might be just number. Let's support both or check usage.
-  // Instruction: "getAccount(data) : permet de récupérer... si data.number correspond..."
-  // So argument is an object.
-  // BUT existing calls might be different? No existing calls yet.
+  if (!number) {
+    return { error: 1, status: 404, data: "aucun numéro fourni" };
+  }
+
   let num = number.number || number;
   let bankaccount = bankaccounts.find((e) => e.number === num);
-  if (!bankaccount)
+  if (!bankaccount){
     return { error: 1, status: 404, data: "aucun compte avec ce numéro" };
+  }
+
   return {
     error: 0,
     status: 200,
@@ -163,11 +163,9 @@ function payOrder(userId, uuid, transactionUuid) {
     if (!transaction)
       return { error: 1, status: 404, data: "transaction inconnue" };
 
-    // Check amount (must be negative of order total), destination (shop account), and currency?
-    // Shop account ID from data.js: "65d721c44399ae9c8321832c"
-    // Transaction amount is negative for the sender.
     if (Math.abs(transaction.amount) !== order.total)
       return { error: 1, status: 404, data: "montant transaction incorrect" };
+
     if (transaction.destination !== "65d721c44399ae9c8321832c")
       return { error: 1, status: 404, data: "destinataire incorrect" };
   }
@@ -222,9 +220,9 @@ function createPayment(data) {
 
   // Credit
   let transactionCredit = {
-    uuid: uuidv4(), // Different UUID? "Il a la même date, mais un uuid différent."
+    uuid: uuidv4(), 
     amount: amount,
-    date: transactionDebit.date, // Same date object
+    date: transactionDebit.date, 
     account: destAccount._id,
   };
   transactions.push(transactionCredit);
